@@ -1,0 +1,18 @@
+/getmessage 1251657596104872027 1157462219295039528
+
+
+db setup:
+
+Message Table:
+- message id (primary)
+- epoch time
+- author
+- message content (not required)
+- message channel (foreign key)
+- Attachments (json map; filename - filepath) (not required)
+
+Channel Table:
+- Channel id (primary)
+- Channel name
+- oldest_archived_message (messageid) (foreign)
+- newest_archived_message (messageid) (foreign)

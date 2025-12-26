@@ -1,0 +1,57 @@
+json message data format:
+/add (adds messages)
+{
+    "guild_id": "",
+    "guild_name": "",
+    "messages": [
+        {
+            "id": "",
+            "epoch": "",
+            "author": "",
+            "content: "",
+            "channel_id": "", (references channel_id)
+            "attachments": [
+                {
+                    "filename": "",
+                    "filepath": ""
+                },
+                ...
+            ]
+        },
+        ...
+    ]
+}
+
+
+json channel data format:
+/add_channel (adds a new channel)
+{
+    "guild_id": "",
+    "guild_name": "",
+    "channel": {
+        "id": "",
+        "name": "",
+        "oldest_archived_message": "", (initially empty) (references message_id)
+        "newest_archived_message": "" (initially empty) (references message_id)
+    }
+}
+
+
+json create guild format:
+/create-guild
+{
+    "guild_id": "",
+    "guild_name": ""
+}
+
+json add user format:
+/add-user
+{
+    "guild_id": "",
+    "guild_name": "",
+    "users": {
+        "id": "",
+        "name": "",
+        "global_name": ""
+    }
+}
