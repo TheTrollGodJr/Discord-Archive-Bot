@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
-//const fetch = require('node-fetch')
+const { apiToken } = require('../../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -7,11 +7,12 @@ module.exports = {
         .setDescription('Close the flask server'),
 
     async execute(interaction) {
-
+        console.log(apiToken)
         let result = null;
         try {
             const resp = await fetch("http://127.0.0.1:5000/end", {
                 method: "POST",
+                headers: {"X-Internal-Token": apiToken}
             });
 
             result = await resp.json();

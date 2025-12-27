@@ -3,7 +3,7 @@ import queue, threading, dbManager, os, time
 from dotenv import load_dotenv
 
 app = Flask(__name__)
-load_dotenv("./token.env")
+load_dotenv(os.path.join(os.path.dirname(__file__), "token.env"))
 
 dbQueue = queue.Queue() # Format: (guildId, jsonData, dataType) -- dataType 0 = msg, 1 = channel, 2 = user
 connections: dict = {}
@@ -21,7 +21,9 @@ def checkIp():
 
 @app.before_request
 def checkToken():
-    if request.headers.get("X-Inernal-Token") != INTERNAL_TOKEN:
+    headerToken = request.headers.get("X-Internal-Token")
+    print(f"Request Token: {headerToken}")
+    if headerToken != INTERNAL_TOKEN and headerToken is None:
         abort(403)
 
 @app.route("/add", methods=["POST"])

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
-//const fetch = require('node-fetch')
+const { apiToken } = require('../../config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -29,7 +29,10 @@ module.exports = {
         try {
             const resp = await fetch("http://127.0.0.1:5000/add-users", {
                 method: "POST",
-                headers: {"content-type": "application/json"},
+                headers: {
+                    "content-type": "application/json",
+                    "X-Internal-Token": apiToken
+                },
                 body: JSON.stringify(data)
             });
 
