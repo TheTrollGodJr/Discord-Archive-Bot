@@ -1,12 +1,28 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, abort, jsonify
 import queue, threading, dbManager, os, time
+from dotenv import load_dotenv
 
 app = Flask(__name__)
+load_dotenv("./token.env")
+
 dbQueue = queue.Queue() # Format: (guildId, jsonData, dataType) -- dataType 0 = msg, 1 = channel, 2 = user
 connections: dict = {}
 closeAll: bool = False
 
 DB_PATH: str = "./db/"
+INTERNAL_TOKEN = os.getenv("token")
+ALLOWED_IPS: list = ["127.0.0.1", "::1"]
+
+@app.before_request
+def checkIp():
+    ip = request.remote_addr
+    if ip not in ALLOWED_IPS:
+        abort(403)
+
+@app.before_request
+def checkToken():
+    if request.headers.get("X-Inernal-Token") != INTERNAL_TOKEN:
+        abort(403)
 
 @app.route("/add", methods=["POST"])
 def queueMessages():
@@ -41,11 +57,14 @@ def queueChannel():
     if guildId not in connections:
         dbQueue.put((guildId, guildName, 3))
 
-    channel = data.get("channel")
-    if not channel:
+    channels = data.get("channels", [])
+    if not channels:
         return jsonify({"status": "no channel"}), 200
     
-    dbQueue.put((guildId, channel, 1))
+    for channel in channels:
+        dbQueue.put((guildId, channel, 1))
+    
+    return jsonify({"status": "queued"})
 
 @app.route("/create-guild", methods=["POST"])
 def createGuild():
@@ -141,7 +160,7 @@ def queueManager() -> None:
             dbQueue.task_done()
 
 def runFlask():
-    app.run()
+    app.run(host="127.0.0.1", port=5000)
 
 def main():
     global closeAll
